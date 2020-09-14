@@ -1,4 +1,4 @@
-# Variational-Density-Propagation-LSTM-for-Sequential-MNIST
+# Variational-Density-Propagation-LSTM-and GRU for-Sequential-MNIST
 This code is an implementation of the variational density propagation LSTM and GRU frameworks on Sequential MNIST. 
 The algorithm is based on the following papers:
 
@@ -14,6 +14,6 @@ Matplotlib\
 pickle\
 timeit
 
-To compute the average output variance of the test set (after removing outliers), we use:
+To compute the average output variance of the test set (after removing outliers), we use:\
 Compute_avreage_output_variance.py
 
