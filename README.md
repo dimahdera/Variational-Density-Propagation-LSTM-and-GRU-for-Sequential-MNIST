@@ -8,10 +8,15 @@ The algorithm is based on the following papers:
 This project uses Python 3.6.0. Before running the code, you have to install:
 
 Tensorflow 2.3.0
+
 Numpy
+
 Scipy
+
 Matplotlib
+
 pickle
+
 timeit
 
 To compute the average output variance of the test set (after removing outliers), we follow:
