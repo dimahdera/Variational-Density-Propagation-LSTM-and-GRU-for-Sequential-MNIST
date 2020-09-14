@@ -342,7 +342,7 @@ class Density_prop_GRU(tf.keras.Model):
 #       The main function also plot the training and validation accuracies vs. number of epochs.
 #
 def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 , batch_size = 20, epochs = 40, lr = 0.001, kl_factor=0.001,
-        Random_noise=True, gaussain_noise_std=0.001, Training=False, continue_training = False, saved_model_epochs=50):    
+        Random_noise=False, gaussain_noise_std=0, Training=True, continue_training = False, saved_model_epochs=50):    
 
     PATH = './saved_models/VDP_gru_epoch_{}/'.format(epochs)
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
