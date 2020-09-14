@@ -31,7 +31,7 @@ pf.close()
 var = np.zeros([400, 25])\
 a = 0\
 for i in range(400):\
-    for j in range(25):\
+####for j in range(25):\
         predicted_out = np.argmax(logits_[i,j,:])\
         s = sigma_[i,j, int(predicted_out), int(predicted_out)]\
         if(np.abs(a - s)> 10000 ):\
