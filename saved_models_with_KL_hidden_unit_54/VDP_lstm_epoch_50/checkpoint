@@ -1,0 +1,2 @@
+model_checkpoint_path: "vdp_lstm_model"
+all_model_checkpoint_paths: "vdp_lstm_model"
