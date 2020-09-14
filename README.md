@@ -1,4 +1,4 @@
-# Variational-Density-Propagation-LSTM-and GRU for-Sequential-MNIST
+# Variational Density Propagation LSTM and GRU for Sequential MNIST
 This code is an implementation of the variational density propagation LSTM and GRU frameworks on Sequential MNIST. 
 The algorithm is based on the following papers:
 
