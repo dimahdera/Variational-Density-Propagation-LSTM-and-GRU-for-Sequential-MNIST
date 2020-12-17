@@ -310,7 +310,7 @@ class Density_prop_GRU(tf.keras.Model):
 #      time_step: the time step in the GRU layer (28).
 #      input_dim:the dimensionality of the input vector (25).
 #      units: The number of hidden units.
-#      output_size: the size of the output vector. It is 10 for the MNIST dataset (10 classes).
+#      number_of_classes: the number of classes. It is 10 for the MNIST dataset (10 classes).
 #      batch_size: the batch size. It is hyper-parameters. We choose it to be 50. 
 #      epochs: the number of epochs. 
 #      lr : the learning rate of the trainting.
@@ -341,7 +341,7 @@ class Density_prop_GRU(tf.keras.Model):
 ##                ---------------------------------
 #       The main function also plot the training and validation accuracies vs. number of epochs.
 #
-def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 , batch_size = 20, epochs = 40, lr = 0.001, kl_factor=0.001,
+def main_function(time_step = 28, input_dim = 25, units = 64, number_of_classes = 10 , batch_size = 20, epochs = 40, lr = 0.001, kl_factor=0.001,
         Random_noise=False, gaussain_noise_std=0, Training=True, continue_training = False, saved_model_epochs=50):    
 
     PATH = './saved_models/VDP_gru_epoch_{}/'.format(epochs)
@@ -366,7 +366,7 @@ def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 ,
         with tf.GradientTape() as tape:
             logits, sigma = gru_model(x)      
             loss_final, loss1, loss2  = nll_gaussian(y, logits,  tf.clip_by_value(t=sigma, clip_value_min=tf.constant(1e-10),
-                                       clip_value_max=tf.constant(1e+6)), output_size , batch_size)
+                                       clip_value_max=tf.constant(1e+6)), number_of_classes , batch_size)
             
             regularization_loss=tf.math.add_n(gru_model.losses)             
             loss = 0.5 * (loss_final + kl_factor*regularization_loss )            
@@ -415,7 +415,7 @@ def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 ,
               update_progress(step / int(x_test.shape[0] / (batch_size)) )               
               logits, sigma = gru_model(x)  
               vloss, loss1, loss2 = nll_gaussian(y, logits,  tf.clip_by_value(t=sigma, clip_value_min=tf.constant(1e-10),
-                                           clip_value_max=tf.constant(1e+6)), output_size , batch_size)
+                                           clip_value_max=tf.constant(1e+6)), number_of_classes , batch_size)
               regularization_loss=tf.math.add_n(gru_model.losses)
               total_vloss = 0.5 *(vloss + kl_factor*regularization_loss)                             
               err_valid1+= total_vloss
@@ -470,7 +470,7 @@ def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 ,
         textfile = open(PATH + 'Related_hyperparameters.txt','w')    
         textfile.write(' Input Dimension : ' +str(input_dim))
         textfile.write('\n No Hidden Nodes : ' +str(units))
-        textfile.write('\n Output Size : ' +str(output_size))
+        textfile.write('\n Number of classes : ' +str(number_of_classes))
         textfile.write('\n No of epochs : ' +str(epochs))
         textfile.write('\n Learning rate : ' +str(lr)) 
         textfile.write('\n time step : ' +str(time_step))
@@ -501,9 +501,9 @@ def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 ,
         test_no_steps = 0        
         acc_test = 0
         true_x = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, time_step, input_dim])
-        true_y = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size])
-        logits_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size])
-        sigma_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size, output_size])
+        true_y = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes])
+        logits_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes])
+        sigma_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes, number_of_classes])
         for step, (x, y) in enumerate(val_dataset):
           update_progress(step / int(x_test.shape[0] / (batch_size)) ) 
           true_x[test_no_steps, :, :, :] = x
@@ -532,7 +532,7 @@ def main_function(time_step = 28, input_dim = 25, units = 64, output_size = 10 ,
         textfile = open(PATH + test_path + 'Related_hyperparameters.txt','w')    
         textfile.write(' Input Dimension : ' +str(input_dim))
         textfile.write('\n No Hidden Nodes : ' +str(units))
-        textfile.write('\n Output Size : ' +str(output_size))
+        textfile.write('\n Number of classes : ' +str(number_of_classes))
         textfile.write('\n No of epochs : ' +str(epochs))
         textfile.write('\n Learning rate : ' +str(lr)) 
         textfile.write('\n time step : ' +str(time_step)) 
