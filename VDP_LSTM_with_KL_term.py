@@ -345,7 +345,7 @@ class Density_prop_LSTM(tf.keras.Model):
 #      time_step: the time step in the LSTM layer (28).
 #      input_dim:the dimensionality of the input vector (25).
 #      units: The number of hidden units.
-#      output_size: the size of the output vector. It is 10 for the MNIST dataset (10 classes).
+#      number_of_classes: the size of the output vector. It is 10 for the MNIST dataset (10 classes).
 #      batch_size: the batch size. It is hyper-parameters. We choose it to be 50. 
 #      epochs: the number of epochs. 
 #      lr : the learning rate of the trainting.
@@ -376,7 +376,7 @@ class Density_prop_LSTM(tf.keras.Model):
 ##                ---------------------------------
 #       The main function also plot the training and validation accuracies vs. number of epochs.
 #      
-def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_size=25, epochs = 50, lr=0.001, kl_factor = 0.001,
+def main_function(time_step=28, input_dim=25, units=54, number_of_classes=10 , batch_size=25, epochs = 50, lr=0.001, kl_factor = 0.001,
         Random_noise=True, gaussain_noise_std=0.4, Training = False, continue_training = False, saved_model_epochs=50):  
       
     PATH = './saved_models_with_KL_hidden_unit_{}/VDP_lstm_epoch_{}/'.format(units, epochs)   	     
@@ -398,7 +398,7 @@ def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_s
         with tf.GradientTape() as tape:
             logits, sigma = lstm_model(x)           
             loss_final, loss1, loss2 = nll_gaussian(y, logits,  tf.clip_by_value(t=sigma, clip_value_min=tf.constant(1e-12),
-                                   clip_value_max=tf.constant(1e+3)), output_size , batch_size)
+                                   clip_value_max=tf.constant(1e+3)), number_of_classes , batch_size)
             regularization_loss=tf.math.add_n(lstm_model.losses)             
             loss = 0.5 * (loss_final + kl_factor*regularization_loss )           
             gradients = tape.gradient(loss, lstm_model.trainable_weights)  
@@ -452,7 +452,7 @@ def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_s
                 update_progress(step / int(x_test.shape[0] / (batch_size)) )              
                 logits, sigma = lstm_model(x)               
                 vloss, loss1, loss2 = nll_gaussian(y, logits,  tf.clip_by_value(t=sigma, clip_value_min=tf.constant(1e-12),
-                                           clip_value_max=tf.constant(1e+3)), output_size , batch_size)
+                                           clip_value_max=tf.constant(1e+3)), number_of_classes , batch_size)
                                            
                 regularization_loss=tf.math.add_n(lstm_model.losses)
                 total_vloss = 0.5 *(vloss + kl_factor*regularization_loss)
@@ -507,7 +507,7 @@ def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_s
         textfile = open(PATH + 'Related_hyperparameters.txt','w')    
         textfile.write(' Input Dimension : ' +str(input_dim))
         textfile.write('\n No Hidden Nodes : ' +str(units))
-        textfile.write('\n Output Size : ' +str(output_size))
+        textfile.write('\n Output Size : ' +str(number_of_classes))
         textfile.write('\n No of epochs : ' +str(epochs))
         textfile.write('\n Learning rate : ' +str(lr)) 
         textfile.write('\n time step : ' +str(time_step))   
@@ -538,9 +538,9 @@ def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_s
         test_no_steps = 0        
         acc_test = 0
         true_x = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, time_step, input_dim])
-        true_y = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size])
-        logits_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size])
-        sigma_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, output_size, output_size])
+        true_y = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes])
+        logits_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes])
+        sigma_ = np.zeros([int(x_test.shape[0] / (batch_size)), batch_size, number_of_classes, number_of_classes])
         for step, (x, y) in enumerate(val_dataset):
             update_progress(step / int(x_test.shape[0] / (batch_size)) ) 
             true_x[test_no_steps, :, :, :] = x
@@ -567,7 +567,7 @@ def main_function(time_step=28, input_dim=25, units=54, output_size=10 , batch_s
         textfile = open(PATH + test_path + 'Related_hyperparameters.txt','w')    
         textfile.write(' Input Dimension : ' +str(input_dim))
         textfile.write('\n No Hidden Nodes : ' +str(units))
-        textfile.write('\n Output Size : ' +str(output_size))
+        textfile.write('\n Number of classes : ' +str(number_of_classes))
         textfile.write('\n No of epochs : ' +str(epochs))
         textfile.write('\n Learning rate : ' +str(lr)) 
         textfile.write('\n time step : ' +str(time_step))   
